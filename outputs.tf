@@ -54,6 +54,11 @@ output "eks_module" {
   description = "The output of the terraform-aws-modules/eks/aws module for use in terraform"
 }
 
+output "workers" {
+  value       = module.cluster.workers
+  description = "Output of all workers in EKS cluster"
+}
+
 // ----------------------------------------------------------------------------
 // Generated IAM Roles
 // ----------------------------------------------------------------------------
@@ -128,6 +133,7 @@ output "vault_user_id" {
 output "vault_user_secret" {
   value       = length(module.vault.vault_user_secret) > 0 ? module.vault.vault_user_secret[0] : ""
   description = "The Vault IAM user secret"
+  sensitive   = true
 }
 
 // ----------------------------------------------------------------------------

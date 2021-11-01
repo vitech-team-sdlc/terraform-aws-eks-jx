@@ -32,9 +32,9 @@ The module makes use of the [Terraform EKS cluster Module](https://github.com/te
   - [Examples](#examples)
   - [Module configuration](#module-configuration)
 - [FAQ: Frequently Asked Questions](#faq-frequently-asked-questions)
-  - [IAM Roles for Service Accounts](#iam-roles-for-service-accounts)
+    - [IAM Roles for Service Accounts](#iam-roles-for-service-accounts)
 - [Development](#development)
-  - [Releasing](#releasing)
+    - [Releasing](#releasing)
 - [How can I contribute](#how-can-i-contribute)
 
 <!-- /TOC -->
@@ -247,10 +247,10 @@ If you want to use a domain with an already existing Route 53 Hosted Zone, you c
 This domain will be configured in the _jx_requirements_ output in the following section:
 
 ```yaml
-ingress:
-  domain: ${domain}
-  ignoreLoadBalancer: true
-  externalDNS: ${enable_external_dns}
+    ingress:
+      domain: ${domain}
+      ignoreLoadBalancer: true
+      externalDNS: ${enable_external_dns}
 ```
 
 If you want to use a subdomain and have this module create and configure a new Hosted Zone with DNS delegation, you can provide the following variables:
@@ -405,17 +405,66 @@ Using only one often results in Spot instances not being able to be provisioned,
 
 To use the Worker Group Launch Template, set the variable `enable_worker_groups_launch_template` to `true`, and define an array of instance types allowed.
 
-When using autoscaling with Launch Templates per AZ, the min and max number of nodes is per zone.
-These values can be adjusted by using the variables `lt_desired_nodes_per_subnet`, `lt_min_nodes_per_subnet`, and `lt_max_nodes_per_subnet`
+These values can be adjusted by using the variable `workers`
+User can set k8s labels and taints (merges and passes via `kubelet_extra_args`) for different purposes.
+
+```
+workers_template_defaults = {
+    override_instance_types = var.allowed_spot_instance_types
+    root_encrypted          = var.encrypt_volume_self
+    instance_type           = var.node_machine_type
+    autoscaling_enabled     = "true"
+    public_ip               = true
+    spot_price              = (var.enable_spot_instances ? var.spot_price : null)
+    subnets                 = (var.create_vpc ? module.vpc.public_subnets : var.subnets)
+
+    root_volume_type = var.volume_type
+    root_volume_size = var.volume_size
+    root_iops        = var.iops
+
+    on_demand_base_capacity = var.on_demand_base_capacity
+    asg_min_size            = var.min_node_count
+    asg_max_size            = var.max_node_count
+    asg_desired_capacity    = var.desired_node_count
+    kubelet_extra_args      = "--node-labels=node.kubernetes.io/lifecycle=`curl -s http://169.254.169.254/latest/meta-data/instance-life-cycle`"
+
+    tags = [
+      {
+        key                 = "k8s.io/cluster-autoscaler/enabled"
+        propagate_at_launch = "false"
+        value               = "true"
+      },
+      {
+        key                 = "k8s.io/cluster-autoscaler/${var.cluster_name}"
+        propagate_at_launch = "false"
+        value               = "true"
+      }
+    ]
+  }
+```
 
 ```terraform
 module "eks-jx" {
   source  = "jenkins-x/eks-jx/aws"
   enable_worker_groups_launch_template = true
-  allowed_spot_instance_types          = ["m5.large", "m5a.large", "m5d.large", "m5ad.large", "t3.large", "t3a.large"]
-  lt_desired_nodes_per_subnet          = 2
-  lt_min_nodes_per_subnet              = 2
-  lt_max_nodes_per_subnet              = 3
+  allowed_spot_instance_types          = ["m5.large", "m5a.large", "m5d.large", "m5ad.large", "t3.large", "t3a.large"] // for all by default
+  workers = {
+    main = {
+      on_demand_base_capacity = 2
+      asg_min_size            = 2
+      asg_max_size            = 10
+      asg_desired_capacity    = 5
+      override_instance_types = ["m5.xlarge", "m5a.xlarge"] // overwrite defaults `allowed_spot_instance_types`
+    }
+    pipeline = {
+      on_demand_base_capacity = 0
+      asg_min_size            = 2
+      asg_max_size            = 5
+      asg_desired_capacity    = 2
+      k8s_labels              = "node.kubernetes.io/component=pipelines"
+      k8s_taints              = "component=pipelines:NoSchedule,kkey=disable:NoSchedule"
+    }
+  }
 }
 ```
 
