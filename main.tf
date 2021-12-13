@@ -96,6 +96,10 @@ module "cluster" {
   profile                               = var.profile
   on_demand_base_capacity               = var.on_demand_base_capacity
   workers                               = var.workers
+  enable_logs_storage                   = var.enable_logs_storage
+  enable_reports_storage                = var.enable_reports_storage
+  enable_repository_storage             = var.enable_repository_storage
+  boot_secrets                          = var.boot_secrets
   fargate_nodes_for_jx_pipelines        = var.fargate_nodes_for_jx_pipelines
 }
 
