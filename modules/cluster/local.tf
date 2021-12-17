@@ -16,7 +16,7 @@ locals {
   project                = data.aws_caller_identity.current.account_id
 
   workers_template_defaults_merge = [for k, v in var.workers : merge(
-    local.workers_template_defaults_defaults,
+    local.workers_template_defaults_defaults, v,
     {
       kubelet_extra_args = join(" ", compact([
         join(",", compact([local.workers_template_defaults_defaults.kubelet_extra_args, contains(keys(v), "k8s_labels") ? v["k8s_labels"] : ""])),
@@ -24,10 +24,11 @@ locals {
       )
     },
     {
-      tags = concat(local.workers_template_defaults_defaults.tags, contains(keys(v), "tags") ? v["tags"] : [])
-    }, v
+      tags = concat(local.workers_template_defaults_defaults.tags, lookup(v, "tags", []))
+    }
   )]
 
+  # Remove odd fields, because worker template will not apply
   workers_template_defaults = [for node in local.workers_template_defaults_merge : {
     for k, v in node : k => v if(k != "k8s_labels") && (k != "k8s_taints")
   }]

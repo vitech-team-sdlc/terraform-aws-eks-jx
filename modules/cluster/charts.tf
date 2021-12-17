@@ -43,3 +43,77 @@ resource "helm_release" "jx-git-operator" {
     null_resource.kubeconfig
   ]
 }
+
+// ----------------------------------------------------------------------------
+// Cluster Autoscaler
+// ----------------------------------------------------------------------------
+
+resource "helm_release" "cluster-autoscaler" {
+  count = var.enable_cluster_autoscaler ? 1 : 0
+  depends_on = [
+    module.eks
+  ]
+
+  name             = "cluster-autoscaler"
+  namespace        = "kube-system"
+  repository       = "https://kubernetes.github.io/autoscaler"
+  chart            = "cluster-autoscaler"
+  version          = "9.10.9"
+  create_namespace = false
+
+  set {
+    name  = "awsRegion"
+    value = var.region
+  }
+  set {
+    name  = "rbac.serviceAccount.name"
+    value = "cluster-autoscaler"
+  }
+  set {
+    name  = "rbac.serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
+    value = module.iam_assumable_role_cluster_autoscaler.this_iam_role_arn
+    type  = "string"
+  }
+  set {
+    name  = "autoDiscovery.clusterName"
+    value = var.cluster_name
+  }
+  set {
+    name  = "autoDiscovery.enabled"
+    value = "true"
+  }
+  set {
+    name  = "rbac.create"
+    value = "true"
+  }
+
+  set {
+    name = "extraArgs.skip-nodes-with-local-storage"
+    value = "false"
+  }
+  set {
+    name = "extraArgs.expander"
+    value = "least-waste"
+  }
+  set {
+    name = "extraArgs.skip-nodes-with-system-pods"
+    value = "false"
+  }
+  set {
+    name = "extraArgs.scale-down-unneeded-time"
+    value = "3m"
+  }
+  set {
+    name = "extraArgs.scale-down-utilization-threshold"
+    value = "0.75"
+  }
+
+  dynamic "set" {
+    for_each = toset(var.boot_cluster_autoscaler_params)
+    content {
+      name  = set.value["name"]
+      value = set.value["value"]
+      type  = set.value["type"]
+    }
+  }
+}
