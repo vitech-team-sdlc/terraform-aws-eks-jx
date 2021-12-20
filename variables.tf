@@ -640,7 +640,7 @@ variable "boot_secrets" {
 
 # Cluster Autoscaler helm chart values
 # https://github.com/kubernetes/autoscaler/blob/master/charts/cluster-autoscaler/values.yaml
-variable "boot_cluster_autoscaler_params" {
+variable "boot_k8s_deployment_cluster_autoscaler_params" {
   description = "Cluster Autoscaler helm chart values"
   type = list(object({
     name  = string
@@ -650,8 +650,8 @@ variable "boot_cluster_autoscaler_params" {
   default = []
 }
 
-variable "enable_cluster_autoscaler" {
-  description = "Enable Cluster Autoscaler"
+variable "enable_k8s_deployment_cluster_autoscaler" {
+  description = "Enable k8s Cluster deployment Autoscaler"
   type = bool
   default = false
 }

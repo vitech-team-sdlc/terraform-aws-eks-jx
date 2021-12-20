@@ -102,8 +102,8 @@ module "cluster" {
   boot_secrets                          = var.boot_secrets
   fargate_nodes_for_jx_pipelines        = var.fargate_nodes_for_jx_pipelines
 
-  enable_k8s_deployment_cluster_autoscaler      = var.enable_cluster_autoscaler
-  boot_k8s_deployment_cluster_autoscaler_params = var.boot_cluster_autoscaler_params
+  enable_k8s_deployment_cluster_autoscaler      = var.enable_k8s_deployment_cluster_autoscaler
+  boot_k8s_deployment_cluster_autoscaler_params = var.boot_k8s_deployment_cluster_autoscaler_params
 }
 
 // ----------------------------------------------------------------------------
