@@ -49,7 +49,7 @@ resource "helm_release" "jx-git-operator" {
 // ----------------------------------------------------------------------------
 
 resource "helm_release" "cluster-autoscaler" {
-  count = var.enable_cluster_autoscaler ? 1 : 0
+  count = var.enable_k8s_deployment_cluster_autoscaler ? 1 : 0
   depends_on = [
     module.eks
   ]
@@ -109,7 +109,7 @@ resource "helm_release" "cluster-autoscaler" {
   }
 
   dynamic "set" {
-    for_each = toset(var.boot_cluster_autoscaler_params)
+    for_each = toset(var.boot_k8s_deployment_cluster_autoscaler_params)
     content {
       name  = set.value["name"]
       value = set.value["value"]
