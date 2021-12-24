@@ -61,3 +61,9 @@ variable "manage_subdomain" {
   default     = true
   type        = bool
 }
+
+variable "domain_registered_in_same_aws_account" {
+  description = "Flag controls is domain registered in the same AWS account"
+  type        = bool
+  default     = true
+}

@@ -655,3 +655,21 @@ variable "enable_k8s_deployment_cluster_autoscaler" {
   type = bool
   default = false
 }
+
+variable "hosted_access_key" {
+  type        = string
+  description = "AWS access key of account where domain registered"
+  default     = ""
+}
+
+variable "hosted_secret_key" {
+  type        = string
+  description = "AWS secret key of account where domain registered"
+  default     = ""
+}
+
+variable "domain_registered_in_same_aws_account" {
+  description = "Flag controls is domain registered in the same AWS account"
+  type        = bool
+  default     = true
+}

@@ -28,3 +28,24 @@ resource "aws_route53_record" "subdomain_ns_delegation" {
     aws_route53_zone.subdomain_zone[0].name_servers[3],
   ]
 }
+
+data "aws_route53_zone" "registered_account_apex_domain_zone" {
+  provider  = aws.hosted_domain
+  count     = var.domain_registered_in_same_aws_account ? 0 : 1
+  name      = "${var.apex_domain}."
+}
+
+resource "aws_route53_record" "registered_account_subdomain_ns_delegation" {
+  provider = aws.hosted_domain
+  count   = var.domain_registered_in_same_aws_account ? 0 : 1
+  zone_id = data.aws_route53_zone.registered_account_apex_domain_zone[0].zone_id
+  name    = join(".", [var.subdomain, var.apex_domain])
+  type    = "NS"
+  ttl     = 30
+  records = [
+    "${aws_route53_zone.subdomain_zone[0].name_servers[0]}.",
+    "${aws_route53_zone.subdomain_zone[0].name_servers[1]}.",
+    "${aws_route53_zone.subdomain_zone[0].name_servers[2]}.",
+    "${aws_route53_zone.subdomain_zone[0].name_servers[3]}."
+  ]
+}

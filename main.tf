@@ -1,12 +1,20 @@
 // ----------------------------------------------------------------------------
 // Configure providers
 // ----------------------------------------------------------------------------
+
 provider "helm" {
   kubernetes {
     host                   = module.cluster.cluster_host
     cluster_ca_certificate = module.cluster.cluster_ca_certificate
     token                  = module.cluster.cluster_token
   }
+}
+
+provider "aws" {
+  alias       = "hosted_domain"
+  region      = "us-east-2"
+  access_key  = var.hosted_access_key
+  secret_key  = var.hosted_secret_key
 }
 
 resource "random_string" "suffix" {
@@ -148,6 +156,9 @@ module "dns" {
   production_letsencrypt         = var.production_letsencrypt
   manage_apex_domain             = var.manage_apex_domain
   manage_subdomain               = var.manage_subdomain
+  providers                      = { aws.hosted_domain = aws.hosted_domain }
+
+  domain_registered_in_same_aws_account = var.domain_registered_in_same_aws_account
 }
 
 module "health" {
