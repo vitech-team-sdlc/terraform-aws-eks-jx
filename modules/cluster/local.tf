@@ -15,7 +15,7 @@ locals {
   secret-infra-namespace = "secret-infra"
   project                = data.aws_caller_identity.current.account_id
 
-  covert_taints_and_labels_in_workers = {
+  convert_taints_and_labels_in_workers = {
     for workers_key, workers_value in var.workers :
       workers_key => {
         k8s_labels = join(",", [ for labels in lookup(workers_value, "k8s_labels", []) : join("=", [ lookup(labels, "key"), lookup(labels, "value") ]) ]),
@@ -23,20 +23,26 @@ locals {
       }
   }
 
-  workers_template_defaults_merge = [ for k, v in merge(var.workers, local.covert_taints_and_labels_in_workers) : merge(
-    local.workers_template_defaults_defaults,
-    {
-      kubelet_extra_args = join(" ",
-        compact([
-          join(",", compact([ local.workers_template_defaults_defaults.kubelet_extra_args, contains(keys(v), "k8s_labels") ? v[ "k8s_labels" ] : "" ])),
-          contains(keys(v), "k8s_taints") ? (v[ "k8s_taints" ] != "" ? "--register-with-taints=${v["k8s_taints"]}" : "" ) : ""
-        ])
-      )
-    },
-    {
-      tags = concat(local.workers_template_defaults_defaults.tags, contains(keys(v), "tags") ? v[ "tags" ] : [ ])
-    }, v
-  )
+  merge_worker_and_converted  = {for k, v in var.workers:
+    k => merge(v, local.convert_taints_and_labels_in_workers[k])
+  }
+
+  workers_template_defaults_merge = [
+    for k, v in local.merge_worker_and_converted : merge(
+      local.workers_template_defaults_defaults,
+      {
+        kubelet_extra_args = join(" ",
+          compact([
+            join(",", compact([ local.workers_template_defaults_defaults.kubelet_extra_args, contains(keys(v), "k8s_labels") ? v[ "k8s_labels" ] : "" ])),
+            contains(keys(v), "k8s_taints") ? (v[ "k8s_taints" ] != "" ? "--register-with-taints=${v["k8s_taints"]}" : "" ) : ""
+          ])
+        )
+      },
+      v,
+      {
+        tags = concat(local.workers_template_defaults_defaults.tags, contains(keys(v), "tags") ? v[ "tags" ] : [ ])
+      }
+    )
   ]
 
   workers_template_defaults = [for node in local.workers_template_defaults_merge : {
