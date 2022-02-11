@@ -88,23 +88,23 @@ resource "helm_release" "cluster-autoscaler" {
   }
 
   set {
-    name = "extraArgs.skip-nodes-with-local-storage"
+    name  = "extraArgs.skip-nodes-with-local-storage"
     value = "false"
   }
   set {
-    name = "extraArgs.expander"
+    name  = "extraArgs.expander"
     value = "least-waste"
   }
   set {
-    name = "extraArgs.skip-nodes-with-system-pods"
+    name  = "extraArgs.skip-nodes-with-system-pods"
     value = "false"
   }
   set {
-    name = "extraArgs.scale-down-unneeded-time"
+    name  = "extraArgs.scale-down-unneeded-time"
     value = "3m"
   }
   set {
-    name = "extraArgs.scale-down-utilization-threshold"
+    name  = "extraArgs.scale-down-utilization-threshold"
     value = "0.75"
   }
 

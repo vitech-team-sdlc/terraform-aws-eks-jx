@@ -105,7 +105,7 @@ module "eks" {
         {
           namespace = "jx"
           labels = {
-            "app.kubernetes.io/managed-by"="tekton-pipelines"
+            "app.kubernetes.io/managed-by" = "tekton-pipelines"
           }
         }
       ]
@@ -205,5 +205,25 @@ resource "kubernetes_config_map" "jenkins_x_requirements" {
   }
   depends_on = [
     module.eks
+  ]
+}
+
+resource "kubernetes_cluster_role_binding" "eks_readonly_binding" {
+  metadata {
+    name = "read-only"
+  }
+  role_ref {
+    api_group = "rbac.authorization.k8s.io"
+    kind      = "ClusterRole"
+    name      = "view"
+  }
+  subject {
+    api_group = "rbac.authorization.k8s.io"
+    kind      = "Group"
+    name      = "read-only-users"
+  }
+
+  depends_on = [
+    null_resource.kubeconfig
   ]
 }

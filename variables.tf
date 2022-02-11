@@ -119,7 +119,7 @@ variable "spot_price" {
 }
 
 variable "node_group_ami" {
-  description = "ami type for the node group worker intances"
+  description = "ami type for the node group worker instances"
   type        = string
   default     = "AL2_x86_64"
 }
@@ -652,8 +652,8 @@ variable "boot_k8s_deployment_cluster_autoscaler_params" {
 
 variable "enable_k8s_deployment_cluster_autoscaler" {
   description = "Enable k8s Cluster deployment Autoscaler"
-  type = bool
-  default = false
+  type        = bool
+  default     = false
 }
 
 variable "hosted_access_key" {

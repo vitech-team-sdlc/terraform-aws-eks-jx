@@ -43,7 +43,7 @@ variable "on_demand_base_capacity" {
 
 variable "workers" {
   description = "Define which workers in worker_groups_launch_template user need"
-  default     = {
+  default = {
     main = {}
   }
 }
@@ -67,12 +67,12 @@ variable "vpc_name" {
 
 variable "public_subnets" {
   type    = list(string)
-  default = [ "10.0.1.0/24", "10.0.2.0/24", "10.0.3.0/24" ]
+  default = ["10.0.1.0/24", "10.0.2.0/24", "10.0.3.0/24"]
 }
 
 variable "private_subnets" {
   type    = list(string)
-  default = [ "10.0.4.0/24", "10.0.5.0/24", "10.0.6.0/24" ]
+  default = ["10.0.4.0/24", "10.0.5.0/24", "10.0.6.0/24"]
 }
 
 variable "vpc_cidr_block" {
@@ -188,27 +188,27 @@ variable "use_kms_s3" {
 variable "map_accounts" {
   description = "Additional AWS account numbers to add to the aws-auth configmap."
   type        = list(string)
-  default     = [ ]
+  default     = []
 }
 
 variable "map_roles" {
   description = "Additional IAM roles to add to the aws-auth configmap."
-  type        = list(object({
+  type = list(object({
     rolearn  = string
     username = string
     groups   = list(string)
   }))
-  default     = [ ]
+  default = []
 }
 
 variable "map_users" {
   description = "Additional IAM users to add to the aws-auth configmap."
-  type        = list(object({
+  type = list(object({
     userarn  = string
     username = string
     groups   = list(string)
   }))
-  default     = [ ]
+  default = []
 }
 
 variable "enable_key_name" {
@@ -243,7 +243,7 @@ variable "cluster_endpoint_private_access" {
 variable "cluster_endpoint_private_access_cidrs" {
   description = "List of CIDR blocks which can access the Amazon EKS private API server endpoint, when public access is disabled."
   type        = list(string)
-  default     = [ "0.0.0.0/0" ]
+  default     = ["0.0.0.0/0"]
 }
 
 variable "cluster_endpoint_public_access" {
@@ -255,13 +255,13 @@ variable "cluster_endpoint_public_access" {
 variable "cluster_endpoint_public_access_cidrs" {
   description = "List of CIDR blocks which can access the Amazon EKS public API server endpoint."
   type        = list(string)
-  default     = [ "0.0.0.0/0" ]
+  default     = ["0.0.0.0/0"]
 }
 
 variable "allowed_spot_instance_types" {
   description = "Allowed machine types for spot instances (must be same size)"
   type        = any
-  default     = [ ]
+  default     = []
 }
 
 variable "enable_worker_groups_launch_template" {
@@ -273,7 +273,7 @@ variable "enable_worker_groups_launch_template" {
 variable "jx_git_operator_values" {
   description = "Extra values for jx-git-operator chart as a list of yaml formated strings"
   type        = list(string)
-  default     = [ ]
+  default     = []
 }
 
 variable "jx_git_url" {
@@ -315,7 +315,7 @@ variable "vpc_id" {
 variable "subnets" {
   description = "The subnet ids to create EKS cluster in if create_vpc is false"
   type        = list(string)
-  default     = [ ]
+  default     = []
 }
 
 variable "encrypt_volume_self" {
@@ -326,11 +326,11 @@ variable "encrypt_volume_self" {
 
 variable "cluster_encryption_config" {
   description = "Configuration block with encryption configuration for the cluster."
-  type        = list(object({
+  type = list(object({
     provider_key_arn = string
     resources        = list(string)
   }))
-  default     = [ ]
+  default = []
 }
 
 variable "create_tekton_role" {
@@ -396,13 +396,13 @@ variable "create_bucketrepo_role" {
 variable "additional_tekton_role_policy_arns" {
   description = "Additional Policy ARNs to attach to Tekton IRSA Role"
   type        = list(string)
-  default     = [ ]
+  default     = []
 }
 
 variable "local-exec-interpreter" {
   description = "If provided, this is a list of interpreter arguments used to execute the command"
   type        = list(string)
-  default     = [ "/bin/bash", "-c" ]
+  default     = ["/bin/bash", "-c"]
 }
 
 // ----------------------------------------------------------------------------
@@ -423,24 +423,24 @@ variable "tls_cert" {
 
 variable "boot_secrets" {
   description = ""
-  type        = list(object({
+  type = list(object({
     name  = string
     value = string
     type  = string
   }))
-  default     = [ ]
+  default = []
 }
 
 # Cluster Autoscaler helm chart values
 # https://github.com/kubernetes/autoscaler/blob/master/charts/cluster-autoscaler/values.yaml
 variable "boot_k8s_deployment_cluster_autoscaler_params" {
   description = "Cluster Autoscaler helm chart values"
-  type        = list(object({
+  type = list(object({
     name  = string
     value = string
     type  = string
   }))
-  default     = [ ]
+  default = []
 }
 
 variable "enable_k8s_deployment_cluster_autoscaler" {

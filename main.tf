@@ -11,10 +11,10 @@ provider "helm" {
 }
 
 provider "aws" {
-  alias       = "hosted_domain"
-  region      = "us-east-2"
-  access_key  = var.hosted_access_key
-  secret_key  = var.hosted_secret_key
+  alias      = "hosted_domain"
+  region     = "us-east-2"
+  access_key = var.hosted_access_key
+  secret_key = var.hosted_secret_key
 }
 
 resource "random_string" "suffix" {
@@ -66,7 +66,7 @@ module "cluster" {
   enable_worker_group                   = var.enable_worker_group
   cluster_in_private_subnet             = var.cluster_in_private_subnet
   map_accounts                          = var.map_accounts
-  map_roles                             = var.map_roles
+  map_roles                             = concat(var.map_roles, local.mapRoles)
   map_users                             = var.map_users
   enable_key_name                       = var.enable_key_name
   key_name                              = var.key_name
