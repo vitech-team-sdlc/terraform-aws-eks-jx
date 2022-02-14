@@ -108,6 +108,7 @@ module "cluster" {
   enable_reports_storage                = var.enable_reports_storage
   enable_repository_storage             = var.enable_repository_storage
   boot_secrets                          = var.boot_secrets
+  use_asm                               = var.use_asm
   fargate_nodes_for_jx_pipelines        = var.fargate_nodes_for_jx_pipelines
 
   enable_k8s_deployment_cluster_autoscaler      = var.enable_k8s_deployment_cluster_autoscaler
