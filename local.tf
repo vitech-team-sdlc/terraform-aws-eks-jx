@@ -6,6 +6,7 @@ locals {
   registry          = var.registry != "" ? var.registry : "${data.aws_caller_identity.current.account_id}.dkr.ecr.${var.region}.amazonaws.com"
   project           = data.aws_caller_identity.current.account_id
   tls_secret_name   = var.tls_key == "" || var.tls_cert == "" ? "" : "tls-ingress-certificates-ca"
+  certificate_type  = var.enable_tls ? ( var.production_letsencrypt ? "le_production" : (var.tls_key == "" || var.tls_cert == "" ? "le_staging" : "custom")) : ""
 
   // ----------------------------------------------------------------------------
   // Let's generate jx-requirements.yml

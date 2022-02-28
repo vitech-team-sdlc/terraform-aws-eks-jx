@@ -37,3 +37,15 @@ variable "nginx_values_file" {
   type        = string
   description = "Name of the values file which holds the helm chart values"
 }
+
+variable "certificate_type" {
+  description = "Certificate type: <empty_string> as none, le_staging, le_production, custom"
+  type        = string
+  default     = ""
+}
+
+variable "domain" {
+  description = "The project domain 'subdomain+apex_domain'"
+  type        = string
+  default     = ""
+}

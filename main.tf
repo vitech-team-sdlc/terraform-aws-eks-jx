@@ -177,5 +177,6 @@ module "nginx" {
   nginx_chart_version    = var.nginx_chart_version
   create_nginx_namespace = var.create_nginx_namespace
   nginx_values_file      = var.nginx_values_file
-
+  certificate_type       = local.certificate_type
+  domain                 = replace(module.dns.domain,".","-")
 }

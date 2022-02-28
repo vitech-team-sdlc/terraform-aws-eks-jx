@@ -4,6 +4,7 @@ controller:
   replicaCount: 3
   extraArgs:
     publish-service: nginx/ingress-nginx-controller
+    ${default-ssl-certificate}
   service:
     enabled: true
     type: LoadBalancer
