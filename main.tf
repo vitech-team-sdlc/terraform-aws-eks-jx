@@ -1,7 +1,6 @@
 // ----------------------------------------------------------------------------
 // Configure providers
 // ----------------------------------------------------------------------------
-
 provider "helm" {
   kubernetes {
     host                   = module.cluster.cluster_host
@@ -113,6 +112,7 @@ module "cluster" {
 
   enable_k8s_deployment_cluster_autoscaler      = var.enable_k8s_deployment_cluster_autoscaler
   boot_k8s_deployment_cluster_autoscaler_params = var.boot_k8s_deployment_cluster_autoscaler_params
+  asm_role                              = var.asm_role
 }
 
 // ----------------------------------------------------------------------------
